@@ -51,6 +51,11 @@ public class AdImpl extends UnicastRemoteObject implements Ad, java.io.Serializa
         this.description = description;
     }
 
+    @Override
+    public void setTypology(String typology) throws java.rmi.RemoteException{
+        this.typology = typology;
+    }
+
     public void setState(String state) throws java.rmi.RemoteException{
         this.state = state;
     }

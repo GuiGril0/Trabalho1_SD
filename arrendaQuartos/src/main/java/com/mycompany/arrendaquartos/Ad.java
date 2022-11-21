@@ -16,6 +16,7 @@ public interface Ad extends java.rmi.Remote {
     public void setGender(String gender) throws java.rmi.RemoteException;
     public void setLocal(String local) throws java.rmi.RemoteException;
     public void setDescription(String description) throws java.rmi.RemoteException;
+    public void setTypology(String typology) throws java.rmi.RemoteException;
 
     //métodos para o cliente de gestão
     public void setAid(int aid) throws java.rmi.RemoteException;

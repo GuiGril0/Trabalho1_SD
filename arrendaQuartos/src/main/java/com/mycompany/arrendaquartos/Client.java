@@ -99,17 +99,24 @@ public class Client {
             typology = typology.toLowerCase();
             if(typology.equals("quarto"))
                 break;
-            String aux = typology.substring(1, typology.length());
-            try {
-                n = Integer.parseInt(aux);
+            else if(typology.startsWith("t")){
+                String aux = typology.substring(1, typology.length());
+                try {
+                    n = Integer.parseInt(aux);
+                    if(n < 0) {
+                        System.out.println("Formato errado! TN (sendo N um número inteiro positivo");
+                        continue;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Formato errado! TN (sendo N um número inteiro positivo");
+                    continue;
+                }
             }
-            catch (NumberFormatException e) {
-                continue;
-            }
-        } while(!typology.startsWith("t"));
-        typology = "T" + String.valueOf(n);
-        ad.se
-
+        } while(true);
+        if(typology.equals("quarto"))
+            ad.setTypology(typology);
+        else
+            typology = "T" + String.valueOf(n);
     }
 
     public static void main(String[] args) {
