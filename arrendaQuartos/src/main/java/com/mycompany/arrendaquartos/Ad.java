@@ -4,6 +4,8 @@
  */
 package com.mycompany.arrendaquartos;
 
+import java.time.LocalDate;
+
 /**
  *
  * @author gui
@@ -17,11 +19,12 @@ public interface Ad extends java.rmi.Remote {
     public void setLocal(String local) throws java.rmi.RemoteException;
     public void setDescription(String description) throws java.rmi.RemoteException;
     public void setTypology(String typology) throws java.rmi.RemoteException;
+    public void setDate(LocalDate date) throws java.rmi.RemoteException;
 
     //métodos para o cliente de gestão
     public void setAid(int aid) throws java.rmi.RemoteException;
     public void setState(String state) throws java.rmi.RemoteException;
 
     //métodos para a base de dados
-    public void registerAd(Ad ad) throws java.rmi.RemoteException;
+    public void sendAdToDB(Ad ad) throws java.rmi.RemoteException;
 }

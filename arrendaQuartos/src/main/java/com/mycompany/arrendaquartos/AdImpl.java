@@ -5,6 +5,7 @@
 package com.mycompany.arrendaquartos;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.time.LocalDate;
 
 /**
  *
@@ -19,7 +20,7 @@ public class AdImpl extends UnicastRemoteObject implements Ad, java.io.Serializa
     public String local;
     public String description;
     public String typology;
-    public String date;
+    public LocalDate date;
 
     int aid;
 
@@ -51,7 +52,6 @@ public class AdImpl extends UnicastRemoteObject implements Ad, java.io.Serializa
         this.description = description;
     }
 
-    @Override
     public void setTypology(String typology) throws java.rmi.RemoteException{
         this.typology = typology;
     }
@@ -64,7 +64,11 @@ public class AdImpl extends UnicastRemoteObject implements Ad, java.io.Serializa
         this.aid = aid;
     }
 
-    public void registerAd(Ad ad) throws java.rmi.RemoteException {
+    public void setDate(LocalDate date) throws java.rmi.RemoteException {
+        this.date = date;
+    }
+
+    public void sendAdToDB(Ad ad) throws java.rmi.RemoteException {
         ConnectionDB bd = new ConnectionDBImpl();
 
     }

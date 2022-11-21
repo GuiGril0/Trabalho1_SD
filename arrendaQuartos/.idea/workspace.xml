@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="17c88c85-8153-4730-a0a1-c63b38fb7150" name="Changes" comment="Update SD project">
+    <list default="true" id="17c88c85-8153-4730-a0a1-c63b38fb7150" name="Changes" comment="Update SD project at night">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/Ad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/Ad.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/AdImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/AdImpl.java" afterDir="false" />
@@ -56,7 +56,8 @@
       <option name="presentableId" value="Default" />
       <updated>1668983218122</updated>
       <workItem from="1668983219234" duration="15149000" />
-      <workItem from="1669006870335" duration="785000" />
+      <workItem from="1669006870335" duration="1036000" />
+      <workItem from="1669032828442" duration="854000" />
     </task>
     <task id="LOCAL-00001" summary="Update SD project">
       <created>1669000444200</created>
@@ -65,7 +66,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669000444200</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Update SD project at night">
+      <created>1669007889768</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1669007889768</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -84,14 +92,15 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Update SD project" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update SD project" />
+    <MESSAGE value="Update SD project at night" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update SD project at night" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/Ad.java</url>
-          <line>15</line>
+          <line>17</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

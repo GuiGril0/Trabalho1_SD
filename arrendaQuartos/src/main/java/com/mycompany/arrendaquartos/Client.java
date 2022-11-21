@@ -4,8 +4,7 @@
  */
 package com.mycompany.arrendaquartos;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /**
  *
@@ -14,33 +13,39 @@ import java.io.InputStreamReader;
 
 public class Client {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static private int aid;
     static void showMenu() {
         try {
             System.out.println("1 - Registar um novo anúncio");
-            System.out.println("3 - Mostrar anúncios (procura)");
             System.out.println("2 - Mostrar anúncios (oferta)");
+            System.out.println("3 - Mostrar anúncios (procura)");
+            System.out.println("4 - Mostrar todos os anúncios de um anunciante");
             System.out.println("5 - Obter detalhes de um anúncio (inserir aid do anúncio)");
             System.out.println("6 - Enviar mensagem para um anúncio (inserir aid do anúncio)");
-            System.out.println("4 - Mostrar todos os anúncios de um anunciante");
             System.out.println("7 - Consultar mensagens de um anúncio (inserir aid do anúncio)");
+            System.out.println("0 - Sair");
 
             int option = Integer.parseInt(br.readLine());
-            if(option < 1 || option > 7) {
-                System.out.println("Selecione uma das opções!");
+            if(option < 0 || option > 7) {
+                System.out.println("Selecione uma das opções válidas!");
                 System.out.println("");
                 showMenu();
             }
             chooseOption(option);
         }
         catch (Exception e) {
-            System.err.println("Argumentos inválidos");
+            System.err.println("Argumentos inválidos!");
             showMenu();
         }
     }
 
-    static void chooseOption(int option) {
+    static void chooseOption(int option) throws java.rmi.RemoteException, java.io.IOException{
         switch (option) {
+            case 0:
+                System.out.println("Adeus! Até à próxima!");
+                System.exit(1);
             case 1:
+                registerAd();
             case 2:
             case 3:
             case 4:
@@ -55,46 +60,46 @@ public class Client {
     static void registerAd() throws java.rmi.RemoteException, java.io.IOException{
         Ad ad = new AdImpl();
 
-        System.out.print("Insira o tipo de anúncio: ");
         String type = "";
         do {
+            System.out.print("Insira o tipo de anúncio: ");
             type = br.readLine();
             type = type.toLowerCase();
         } while(!type.equals("oferta") || !type.equals("procura"));
         ad.setType(type);
 
-        System.out.print("Insira o seu nome: ");
         String name = "";
         do {
+            System.out.print("Insira o seu nome: ");
             name = br.readLine();
         } while(name.length() == 0);
         ad.setAdvertiser(name);
 
-        System.out.print("Insira a localização do alojamento: ");
         String local = "";
         do {
+            System.out.print("Insira a localização do alojamento: ");
             local = br.readLine();
         } while(local.length() == 0);
         ad.setLocal(local);
 
-        System.out.println("Insira o preço do alojamento: ");
         double price = -1;
         do {
+            System.out.println("Insira o preço do alojamento: ");
             price = Double.parseDouble(br.readLine());
         } while(price < 0);
         ad.setPrice(price);
 
-        System.out.print("Insira o género que pretende para potenciais interessados (masculino, feminino ou indiferente)");
         String gender = "";
         do {
+            System.out.print("Insira o género que pretende para potenciais interessados (masculino, feminino ou indiferente)");
             gender = br.readLine();
             gender = gender.toLowerCase();
         } while(!gender.equals("masculino") || !gender.equals("feminino") || !gender.equals("indiferente"));
 
-        System.out.print("Insira a tipologia do alojamento (quarto ou T1, T2...");
         String typology = "";
         int n = 0;
         do {
+            System.out.print("Insira a tipologia do alojamento (quarto ou T1, T2...");
             typology = br.readLine();
             typology = typology.toLowerCase();
             if(typology.equals("quarto"))
@@ -113,10 +118,14 @@ public class Client {
                 }
             }
         } while(true);
-        if(typology.equals("quarto"))
-            ad.setTypology(typology);
-        else
+        if(typology.startsWith("t"))
             typology = "T" + String.valueOf(n);
+        ad.setTypology(typology);
+
+        ad.setDate(java.time.LocalDate.now());
+
+        aid++;
+        ad.setAid(aid);
     }
 
     public static void main(String[] args) {
@@ -133,6 +142,7 @@ public class Client {
 
         try {
             Ad ad = (Ad) java.rmi.Naming.lookup("rmi://" + regHost + ":" + regPort + "/ad");
+            aid = 0;
 
             System.out.println("Bem vindo ao sistema de oferta e procura de alojamentos!");
             System.out.println("");
