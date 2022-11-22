@@ -70,6 +70,5 @@ public class AdImpl extends UnicastRemoteObject implements Ad, java.io.Serializa
 
     public void sendAdToDB(Ad ad) throws java.rmi.RemoteException {
         ConnectionDB bd = new ConnectionDBImpl();
-
     }
 }

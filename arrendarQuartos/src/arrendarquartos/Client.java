@@ -123,6 +123,65 @@ public class Client {
         ad.setState("inativo");
     }
 
+    public void showAds() throws java.rmi.RemoteException, IOException {
+        String typeAd = "";
+        String fields = "";
+        do {
+            System.out.println("Tipo de anúncio:");
+            System.out.println("o - oferta");
+            System.out.println("p - procura");
+            typeAd = br.readLine();
+            typeAd = typeAd.toLowerCase();
+        } while(!typeAd.equals("o") || !typeAd.equals("p") || !typeAd.equals("oferta") || !typeAd.equals("procura"));
+        if(typeAd.equals("o") || typeAd.equals("oferta"))
+            fields = "tipo=oferta&";
+        else
+            fields = "tipo=procura&";
+        fields += "estado=ativo&";
+
+        String chooseFilters = "";
+        do {
+            System.out.println("Deseja utilizar campos de procura adicionais?");
+            System.out.println("s - sim");
+            System.out.println("n - não");
+            chooseFilters = br.readLine();
+            chooseFilters = chooseFilters.toLowerCase();
+        } while(!chooseFilters.equals("s") || !chooseFilters.equals("n") || !chooseFilters.equals("sim") || !chooseFilters.equals("não"));
+
+        if(chooseFilters.equals("sim") || chooseFilters.equals("s")) {
+            String aux = "";
+
+            System.out.println("Insira a localização desejada");
+            aux = br.readLine();
+            if(!aux.equals(""))
+                fields += "localizacao=" + aux + "&";
+            aux = "";
+            do {
+                System.out.println("Insira o género desejado");
+                aux = br.readLine();
+            } while(!aux.equals("masculino") || !aux.equals("feminino") || !aux.equals("indiferente") || !aux.equals(""));
+            if(!aux.equals(""))
+                fields += "genero=" + aux + "&";
+            aux = "";
+            do {
+                System.out.println("Insira o preço desejado");
+                aux = br.readLine();
+                if(aux.equals(""))
+                    break;
+                try {
+                    int price = Integer.parseInt(aux);
+                    if(price < 0)
+                        continue;
+                } catch(NumberFormatException e) {
+                    System.out.println("Insira um valor válido para o preço!");
+                    continue;
+                }
+            } while(true);
+            if(!aux.equals(""))
+                fields += "preco=" + aux;
+        }
+    }
+
     public static void main(String[] args) {
         String regHost = "localhost";
         String regPort = "9000";
