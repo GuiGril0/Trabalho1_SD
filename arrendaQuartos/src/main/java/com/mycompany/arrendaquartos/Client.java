@@ -13,7 +13,7 @@ import java.io.*;
 
 public class Client {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static void showMenu() {
+    private static void showMenu() {
         try {
             System.out.println("1 - Registar um novo anúncio");
             System.out.println("2 - Mostrar anúncios (oferta)");
@@ -122,20 +122,20 @@ public class Client {
         ad.setTypology(typology);
 
         ad.setDate(java.time.LocalDate.now());
+        ad.setState("inativo");
     }
 
     public static void main(String[] args) {
         String regHost = "localhost";
         String regPort = "9000";
 
-        args[0] = regHost;
-        args[1] = regPort;
-
-        if(args.length != 1) {
+        if(args.length != 2) {
             System.out.println("Faltam argumentos!");
             System.exit(1);
         }
 
+        regHost = args[0];
+        regPort = args[1];
         try {
             Ad ad = (Ad) java.rmi.Naming.lookup("rmi://" + regHost + ":" + regPort + "/ad");
 

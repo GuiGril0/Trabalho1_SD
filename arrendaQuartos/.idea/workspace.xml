@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="17c88c85-8153-4730-a0a1-c63b38fb7150" name="Changes" comment="Update SD project morning" />
+    <list default="true" id="17c88c85-8153-4730-a0a1-c63b38fb7150" name="Changes" comment="Update SD project night">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/AdImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/AdImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/ClientManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/ClientManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/ConnectionDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/ConnectionDB.java" afterDir="false" />
+    </list>
+    <list id="ca0956fb-ff98-4962-8605-bae27a528cd4" name="Changes by helder" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/ConnectionDBImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mycompany/arrendaquartos/ConnectionDBImpl.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,6 +63,8 @@
       <workItem from="1669006870335" duration="1036000" />
       <workItem from="1669032828442" duration="854000" />
       <workItem from="1669038881720" duration="40000" />
+      <workItem from="1669075605071" duration="446000" />
+      <workItem from="1669141860912" duration="2847000" />
     </task>
     <task id="LOCAL-00001" summary="Update SD project">
       <created>1669000444200</created>
@@ -76,7 +87,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669038902566</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Update SD project night">
+      <created>1669075754037</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1669075754037</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -97,7 +115,8 @@
     <MESSAGE value="Update SD project" />
     <MESSAGE value="Update SD project at night" />
     <MESSAGE value="Update SD project morning" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update SD project morning" />
+    <MESSAGE value="Update SD project night" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update SD project night" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

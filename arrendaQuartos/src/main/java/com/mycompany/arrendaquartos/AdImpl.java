@@ -13,7 +13,7 @@ import java.time.LocalDate;
  */
 public class AdImpl extends UnicastRemoteObject implements Ad, java.io.Serializable{
     public String advertiser;
-    public String type;
+    public String typeAd;
     public String state;
     public double price;
     public String gender;
@@ -33,7 +33,7 @@ public class AdImpl extends UnicastRemoteObject implements Ad, java.io.Serializa
     }
 
     public void setType(String type) throws java.rmi.RemoteException {
-        this.type = type;
+        this.typeAd = type;
     }
 
     public void setPrice(double price) throws java.rmi.RemoteException{

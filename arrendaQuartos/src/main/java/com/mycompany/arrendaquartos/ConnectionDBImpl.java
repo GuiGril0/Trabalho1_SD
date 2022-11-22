@@ -6,27 +6,19 @@ package com.mycompany.arrendaquartos;
 import java.io.*;
 import java.sql.*;
 import java.sql.DriverManager;
-
-
+import java.sql.SQLException;
 /**
  *
  * @author gui
  */
 public class ConnectionDBImpl implements ConnectionDB {
-    public static void main(String[] args) throws Exception{
-        try{
-            Class.forName ("org.postgresql.Driver");
-            String url = "jdbc:postgresql://localhost:9000/bd3";
-            String username = "helder";
-            String password = "1234";
-            java.sql.Connection con = DriverManager.getConnection(url, username, password);
-            System.out.println("Conexão bem sucedida");
-            java.sql.Statement stmt = con.createStatement();
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Erro na conexão");
+    public static void main(String[] args) throws Exception {
+        Connection con = null;
+        try {
+            conn = DriverManager.getConnection(url, user, password);
+            System.out.println("Connected to the PostgreSQL server successfully.");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
 }
