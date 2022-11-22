@@ -13,7 +13,6 @@ import java.io.*;
 
 public class Client {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static private int aid;
     static void showMenu() {
         try {
             System.out.println("1 - Registar um novo anúncio");
@@ -123,9 +122,6 @@ public class Client {
         ad.setTypology(typology);
 
         ad.setDate(java.time.LocalDate.now());
-
-        aid++;
-        ad.setAid(aid);
     }
 
     public static void main(String[] args) {
@@ -142,7 +138,6 @@ public class Client {
 
         try {
             Ad ad = (Ad) java.rmi.Naming.lookup("rmi://" + regHost + ":" + regPort + "/ad");
-            aid = 0;
 
             System.out.println("Bem vindo ao sistema de oferta e procura de alojamentos!");
             System.out.println("");
