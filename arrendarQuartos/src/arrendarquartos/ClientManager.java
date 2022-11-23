@@ -11,7 +11,8 @@ import java.io.*;
  * @author gui
  */
 public class ClientManager {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static ConnectionDB bd;
     private static void showMenu() throws IOException{
         System.out.println("1 - Mostrar anúncios (inserir estado ativo ou inativo)");
         System.out.println("2 - Obter detalhes de um anúncio (inserir aid do anúncio)");
@@ -77,13 +78,18 @@ public class ClientManager {
 
         try {
             Ad ad = (Ad) java.rmi.Naming.lookup("rmi://" + regHost + ":" + regPort + "/ad");
+            bd = new ConnectionDBImpl();
 
             System.out.println("Bem vindo ao sistema de oferta e procura de alojamentos!");
             System.out.println("");
 
+            bd.connectDb();
+
+            showMenu();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 }
+

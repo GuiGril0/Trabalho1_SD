@@ -5,6 +5,8 @@
 package arrendarquartos;
 
 import java.io.*;
+import java.sql.Date;
+
 /**
  *
  * @author gui
@@ -47,15 +49,29 @@ public class Client {
             case 0:
                 System.out.println("Adeus! Até à próxima!");
                 System.exit(1);
+                break;
             case 1:
                 registerAd();
+                break;
             case 2:
                 searchAds();
+                break;
             case 3:
+                searchByAdvertiser();
+                break;
             case 4:
+                getDetailsByAid();
+                break;
             case 5:
+                sendMessage();
+                break;
             case 6:
+                showMessages();
+                break;
+            default:
+                showMenu();
         }
+        showMenu();
     }
 
     static void registerAd() throws java.rmi.RemoteException, java.io.IOException{
@@ -123,10 +139,10 @@ public class Client {
             typology = "T" + String.valueOf(n);
         ad.setTypology(typology);
 
-        ad.setDate(java.time.LocalDate.now());
+        ad.setDate(new Date(System.currentTimeMillis()));
         ad.setState("inativo");
 
-        bd.insertIntoTable("advertisements", ad);
+        bd.insertIntoTableAdvertisement(ad);
     }
 
     public static void searchAds() throws java.rmi.RemoteException, IOException {
@@ -185,6 +201,7 @@ public class Client {
             } while(true);
             if(!aux.equals(""))
                 fields += "price=" + aux;
+            bd.consultTableAdvertisement(fields);
         }
     }
 
@@ -195,6 +212,7 @@ public class Client {
             advertiser = br.readLine();
         } while(advertiser.equals(""));
         advertiser = "anunciante=" + advertiser;
+        bd.consultTableAdvertisement(advertiser);
     }
 
     public static void getDetailsByAid() throws java.rmi.RemoteException, IOException{
@@ -211,6 +229,59 @@ public class Client {
             }
         } while(true);
         String aid = "aid=" + String.valueOf(aux);
+        bd.consultTableAdvertisement(aid);
+    }
+
+    public static void sendMessage() throws java.rmi.RemoteException, IOException{
+        Message msg = new MessageImpl();
+        String aux = "";
+
+        do {
+            System.out.println("Digite o aid do anúncio que pretende contactar:");
+            aux = br.readLine();
+            try {
+                int n = Integer.parseInt(aux);
+                if(n > 0)
+                    break;
+            } catch(NumberFormatException e) {
+                System.out.println("Formato de aid inválido! Por favor insira apenas números inteiros positivos!");
+                continue;
+            }
+        } while(true);
+        msg.setAid(Integer.parseInt(aux));
+
+        aux = "";
+        do {
+            System.out.println("Insira o seu nome:");
+            aux = br.readLine();
+        } while(aux.equals(""));
+        msg.setSender(aux);
+
+        aux = "";
+        do {
+            System.out.println("Escreva o conteúdo da sua mensagem:");
+            aux = br.readLine();
+        } while(aux.equals(""));
+        msg.setContent(aux);
+
+        msg.setDate(new Date(System.currentTimeMillis()));
+
+        bd.insertIntoTableMessages(msg);
+    }
+
+    public static void showMessages() throws IOException {
+        int aid;
+        do {
+            try {
+                aid = Integer.parseInt(br.readLine());
+                if(aid > 0)
+                    break;
+            } catch(NumberFormatException e) {
+                System.err.println("Formato de aid inválido! Por favor insira um número inteiro positivo");
+            }
+        } while(true);
+        String fields = "aid=" + String.valueOf(aid);
+        bd.consultTableMessages(fields);
     }
 
     public static void main(String[] args) {
@@ -230,6 +301,8 @@ public class Client {
 
             System.out.println("Bem vindo ao sistema de oferta e procura de alojamentos!");
             System.out.println("");
+
+            bd.connectDb();
 
             showMenu();
         }

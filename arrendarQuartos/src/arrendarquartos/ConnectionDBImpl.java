@@ -22,7 +22,7 @@ public class ConnectionDBImpl implements ConnectionDB {
         try{
             Class.forName("org.postgresql.Driver");
 
-            con = DriverManager.getConnection("jdbc:postgresql://localhost/bd4", "gui", "umaQualquer");
+            con = DriverManager.getConnection("jdbc:postgresql://localhost/sd", "gui", "umaPass");
             stmt = con.createStatement();
             System.out.println("Conectado com sucesso");
         }
@@ -34,13 +34,18 @@ public class ConnectionDBImpl implements ConnectionDB {
 
     //Insert into table
 
-    public void insertIntoTable(String table, Ad ad) {
+    public void insertIntoTableAdvertisement(Ad ad) {
         try {
             //stmt.executeUpdate("insert into advertisement values ('helder', 'procura', 'ativo', 350, 'masculino', 'elvas', 'casa do harry maguire', 'nsei', '2001-09-11' );");
-            stmt.executeUpdate("insert into" +table+ "values ('"
+            stmt.executeUpdate("insert into advertisement values ('"
                     +ad.getAdvertiser()+ "', " +
                     "'" +ad.getType()+ "', " +
-                    "'" +ad.getState()+ "' "+ ad.getPrice());
+                    "'" +ad.getState()+ "' "+ ad.getPrice()+
+                    ", '" +ad.getGender()+ "', " +
+                    "'" +ad.getLocal()+ "', " +
+                    "'" +ad.getDescription()+ "', " +
+                    "'" +ad.getTypology()+ "', " +
+                    "'" +ad.getDate()+ "' );");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -48,42 +53,53 @@ public class ConnectionDBImpl implements ConnectionDB {
         }
     }
 
-    public void consultTable(String table, String fields) {
+    public void insertIntoTableMessages(Message msg) throws java.rmi.RemoteException{
+        try {
+            //"insert into msg values ('sender', 'content', 'date', 'aid');
+            stmt.executeUpdate("insert into messages values ('"
+                    +msg.getSender()+ "', " +
+                    "'" +msg.getContent()+ ", " +
+                    "'" +msg.getDate()+ ", " +
+                    "'" +msg.getAid()+ "');");
+        } catch(Exception e) {
+            e.printStackTrace();
+            System.err.println("Problems on insert...");
+        }
+    }
+
+    public void consultTableAdvertisement(String fields) {
         try {
 
             String[] arr = fields.split("&");
             String aux = "";
             for(String i : arr) {
-                aux += i + " ";
+                aux += i + " AND";
             }
+            aux = aux.substring(0, aux.length() - 3);
             aux = aux.trim();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM " + table + "WHERE " + aux + ";");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM advertisement WHERE " + aux + ";");
 
-            while (rs.next()) {
-                String advertiser = rs.getString("advertiser");
-                String typead = rs.getString("typead");
-                String statead = rs.getString("statead");
-                double price = rs.getDouble("price");
-                String gender = rs.getString("gender");
-                String localad = rs.getString("description");
-                String description = rs.getString("description");
-                String typology = rs.getString("typology");
-                Date date = rs.getDate("date");
-                int aid = rs.getInt("aid");
+            if(rs.next() == true) {
+                while (rs.next()) {
+                    String advertiser = rs.getString("advertiser");
+                    String typead = rs.getString("typead");
+                    String statead = rs.getString("statead");
+                    double price = rs.getDouble("price");
+                    String gender = rs.getString("gender");
+                    String localAd = rs.getString("description");
+                    String description = rs.getString("description");
+                    String typology = rs.getString("typology");
+                    Date date = rs.getDate("date");
+                    int aid = rs.getInt("aid");
 
-                Ad ad = new AdImpl();
-                ad.setAdvertiser(advertiser);
-                ad.setType(typead);
-                ad.setState(statead);
-                ad.setPrice(price);
-                ad.setGender(gender);
-                ad.setLocal(localad);
-                ad.setDescription(description);
-                ad.setTypology(typology);
-                ad.setDate(date);
-
-                System.out.println("adv: "+advertiser+"  typead: "+typead+" statead: "+price+ "   gender: "+gender+ "localad: "+localad+ "description: "+description+ " typology: "+typology+" date: "+date+" aid: " +aid);
+                    if (aux.startsWith("aid"))
+                        System.out.println("Detalhes do anúncio " + aid + ": " + description);
+                    else
+                        System.out.println("aid: " + aid + " | anunciante: " + advertiser + " | tipo: " +typead+ " | estado: " +statead+ " | preço: " +price+ " | género: " +gender+ " | local: " +localAd+ " | descrição: " +description+ " | tipologia: " +typology+ " | date: " +date);
+                }
             }
+            else
+                System.out.println("Nenhum anúncio encontrado com as especificações desejadas!");
             rs.close(); // muito importante depois da consulta!
         }
         catch (Exception e) {
@@ -92,6 +108,26 @@ public class ConnectionDBImpl implements ConnectionDB {
         }
     }
 
+    public void consultTableMessages(String fields) {
+        try {
+            ResultSet rs = stmt.executeQuery("SELECT * FROM messages WHERE " + fields + ";");
+            if(rs.next() == true) {
+                while(rs.next()) {
+                    String sender = rs.getString("sender");
+                    String content = rs.getString("content");
+                    Date date = rs.getDate("date");
+                    int aid = rs.getInt("aid");
+
+                    System.out.println("remetente: " + sender + " | conteúdo: " + content + " | data: " + date + " | aid: " + aid);
+                }
+            }
+            else
+                System.out.println("Nenhuma mensagem encontrada!");
+        } catch(Exception e) {
+            e.printStackTrace();
+            System.err.println("Problems retrieving data from db...");
+        }
+    }
 
     public void closeConnection() {
         try {
@@ -119,4 +155,12 @@ CREATE TABLE advertisement(
   date DATE,
   aid SERIAL PRIMARY KEY
   );
+
+CREATE TABLE message(
+aid integer FOREIGN KEY
+mensagem varchar(1000)
+remetente varchar(30)
+date date
+)
  */
+
