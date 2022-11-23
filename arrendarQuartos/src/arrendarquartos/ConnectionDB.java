@@ -9,6 +9,8 @@ package arrendarquartos;
  * @author gui
  */
 public interface ConnectionDB {
-    public void connect();
-    public void insert();
+    public void connectDb();
+    public void insertIntoTable(String table, Ad ad) throws java.rmi.RemoteException;
+    public void consultTable(String table);
+    public void closeConnection();
 }

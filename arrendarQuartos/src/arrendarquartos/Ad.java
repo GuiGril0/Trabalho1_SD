@@ -19,6 +19,15 @@ public interface Ad extends java.rmi.Remote {
     public void setDescription(String description) throws java.rmi.RemoteException;
     public void setTypology(String typology) throws java.rmi.RemoteException;
     public void setDate(LocalDate date) throws java.rmi.RemoteException;
+    public String getAdvertiser() throws  java.rmi.RemoteException;
+    public String getType() throws  java.rmi.RemoteException;
+    public String getState() throws  java.rmi.RemoteException;
+    public double getPrice() throws  java.rmi.RemoteException;
+    public String getGender() throws  java.rmi.RemoteException;
+    public String getLocal() throws  java.rmi.RemoteException;
+    public String getDescription() throws  java.rmi.RemoteException;
+    public String getTypology() throws java.rmi.RemoteException;
+    public LocalDate getDate() throws  java.rmi.RemoteException;
 
     //métodos para o cliente de gestão
     public void setAid(int aid) throws java.rmi.RemoteException;

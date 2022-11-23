@@ -10,24 +10,30 @@ import java.io.*;
  * @author gui
  */
 public class Client {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static ConnectionDB bd;
     private static void showMenu() {
         try {
             System.out.println("1 - Registar um novo anúncio");
-            System.out.println("2 - Mostrar anúncios (oferta)");
-            System.out.println("3 - Mostrar anúncios (procura)");
-            System.out.println("4 - Mostrar todos os anúncios de um anunciante");
-            System.out.println("5 - Obter detalhes de um anúncio (inserir aid do anúncio)");
-            System.out.println("6 - Enviar mensagem para um anúncio (inserir aid do anúncio)");
-            System.out.println("7 - Consultar mensagens de um anúncio (inserir aid do anúncio)");
+            System.out.println("2 - Mostrar anúncios (oferta ou procura)");
+            System.out.println("3 - Mostrar todos os anúncios de um anunciante");
+            System.out.println("4 - Obter detalhes de um anúncio (inserir aid do anúncio)");
+            System.out.println("5 - Enviar mensagem para um anúncio (inserir aid do anúncio)");
+            System.out.println("6 - Consultar mensagens de um anúncio (inserir aid do anúncio)");
             System.out.println("0 - Sair");
 
-            int option = Integer.parseInt(br.readLine());
-            if(option < 0 || option > 7) {
-                System.out.println("Selecione uma das opções válidas!");
-                System.out.println("");
+            int option = -1;
+            try {
+                option = Integer.parseInt(br.readLine());
+                if (option < 0 || option > 6) {
+                    System.out.println("Insira uma das opções apresentadas!");
+                    showMenu();
+                }
+            } catch(NumberFormatException e) {
+                System.out.println("Opção inválida!");
                 showMenu();
             }
+
             chooseOption(option);
         }
         catch (Exception e) {
@@ -36,7 +42,7 @@ public class Client {
         }
     }
 
-    static void chooseOption(int option) throws java.rmi.RemoteException, java.io.IOException{
+    private static void chooseOption(int option) throws java.rmi.RemoteException, java.io.IOException{
         switch (option) {
             case 0:
                 System.out.println("Adeus! Até à próxima!");
@@ -44,13 +50,11 @@ public class Client {
             case 1:
                 registerAd();
             case 2:
+                searchAds();
             case 3:
             case 4:
             case 5:
             case 6:
-            case 7:
-            case 8:
-            case 9:
         }
     }
 
@@ -121,9 +125,11 @@ public class Client {
 
         ad.setDate(java.time.LocalDate.now());
         ad.setState("inativo");
+
+        bd.insertIntoTable("advertisements", ad);
     }
 
-    public void showAds() throws java.rmi.RemoteException, IOException {
+    public static void searchAds() throws java.rmi.RemoteException, IOException {
         String typeAd = "";
         String fields = "";
         do {
@@ -134,10 +140,10 @@ public class Client {
             typeAd = typeAd.toLowerCase();
         } while(!typeAd.equals("o") || !typeAd.equals("p") || !typeAd.equals("oferta") || !typeAd.equals("procura"));
         if(typeAd.equals("o") || typeAd.equals("oferta"))
-            fields = "tipo=oferta&";
+            fields = "typead=oferta&";
         else
-            fields = "tipo=procura&";
-        fields += "estado=ativo&";
+            fields = "typead=procura&";
+        fields += "statead=ativo&";
 
         String chooseFilters = "";
         do {
@@ -154,14 +160,14 @@ public class Client {
             System.out.println("Insira a localização desejada");
             aux = br.readLine();
             if(!aux.equals(""))
-                fields += "localizacao=" + aux + "&";
+                fields += "localad=" + aux + "&";
             aux = "";
             do {
                 System.out.println("Insira o género desejado");
                 aux = br.readLine();
             } while(!aux.equals("masculino") || !aux.equals("feminino") || !aux.equals("indiferente") || !aux.equals(""));
             if(!aux.equals(""))
-                fields += "genero=" + aux + "&";
+                fields += "gender=" + aux + "&";
             aux = "";
             do {
                 System.out.println("Insira o preço desejado");
@@ -178,8 +184,33 @@ public class Client {
                 }
             } while(true);
             if(!aux.equals(""))
-                fields += "preco=" + aux;
+                fields += "price=" + aux;
         }
+    }
+
+    public static void searchByAdvertiser() throws java.rmi.RemoteException, IOException{
+        String advertiser = "";
+        do {
+            System.out.println("Insira o nome do anunciante desejado:");
+            advertiser = br.readLine();
+        } while(advertiser.equals(""));
+        advertiser = "anunciante=" + advertiser;
+    }
+
+    public static void getDetailsByAid() throws java.rmi.RemoteException, IOException{
+        int aux;
+        do {
+            System.out.println("Insira o aid do anúncio desejado:");
+            try {
+                aux = Integer.parseInt(br.readLine());
+                if(aux > 0)
+                    break;
+            } catch(NumberFormatException e) {
+                System.out.println("Aid inválido!");
+                continue;
+            }
+        } while(true);
+        String aid = "aid=" + String.valueOf(aux);
     }
 
     public static void main(String[] args) {
@@ -195,6 +226,7 @@ public class Client {
         regPort = args[1];
         try {
             Ad ad = (Ad) java.rmi.Naming.lookup("rmi://" + regHost + ":" + regPort + "/ad");
+            bd = new ConnectionDBImpl();
 
             System.out.println("Bem vindo ao sistema de oferta e procura de alojamentos!");
             System.out.println("");
