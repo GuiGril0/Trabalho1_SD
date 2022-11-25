@@ -6,14 +6,20 @@ package arrendarquartos;
 
 import java.io.*;
 import java.sql.Date;
+import java.util.List;
 
 /**
  *
  * @author gui
  */
 public class Client {
-    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    private static ConnectionDB bd;
+    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); //variável responsável por receber os inputs da consola
+    private static RemoteObject obj; //variável do objeto remoto responsável por comunicar com a BD
+
+    /*
+    função responsável por mostrar o menu para
+    escolher a funcionalidade desejada
+     */
     private static void showMenu() {
         try {
             System.out.println("1 - Registar um novo anúncio");
@@ -44,7 +50,11 @@ public class Client {
         }
     }
 
-    private static void chooseOption(int option) throws java.rmi.RemoteException, java.io.IOException{
+    /*
+    função que recebe a opção desejada e encaminha o cliente
+    para a função que execute o requisitado por este
+    */
+    private static void chooseOption(int option) throws IOException{
         switch (option) {
             case 0:
                 System.out.println("Adeus! Até à próxima!");
@@ -74,21 +84,27 @@ public class Client {
         showMenu();
     }
 
-    static void registerAd() throws java.rmi.RemoteException, java.io.IOException{
-        Ad ad = new AdImpl();
+    /*
+    função responsável por registar os anúncios na base de dados
+     */
+    private static void registerAd() throws IOException{
+        Ad ad = new Ad();
 
         String type = "";
         do {
             System.out.print("Insira o tipo de anúncio: ");
             type = br.readLine();
             type = type.toLowerCase();
-        } while(!type.equals("oferta") || !type.equals("procura"));
+            if(type.equals("oferta") || type.equals("procura"))
+                break;
+        } while(true);
         ad.setType(type);
 
         String name = "";
         do {
             System.out.print("Insira o seu nome: ");
             name = br.readLine();
+            name = name.trim();
         } while(name.length() == 0);
         ad.setAdvertiser(name);
 
@@ -96,28 +112,41 @@ public class Client {
         do {
             System.out.print("Insira a localização do alojamento: ");
             local = br.readLine();
+            local = local.trim();
         } while(local.length() == 0);
         ad.setLocal(local);
 
-        double price = -1;
+        int price = -1;
         do {
-            System.out.println("Insira o preço do alojamento: ");
-            price = Double.parseDouble(br.readLine());
-        } while(price < 0);
+            System.out.print("Insira o preço do alojamento: ");
+            try {
+                price = Integer.parseInt(br.readLine());
+                if(price > 0)
+                    break;
+            } catch(NumberFormatException e) {
+                System.err.println("Formato inválido! Insira um número inteiro positivo!");
+                continue;
+            }
+        } while(true);
         ad.setPrice(price);
 
         String gender = "";
         do {
-            System.out.print("Insira o género que pretende para potenciais interessados (masculino, feminino ou indiferente)");
+            System.out.print("Insira o género que pretende para potenciais interessados (masculino, feminino ou indiferente): ");
             gender = br.readLine();
+            gender = gender.trim();
             gender = gender.toLowerCase();
-        } while(!gender.equals("masculino") || !gender.equals("feminino") || !gender.equals("indiferente"));
+            if(gender.equals("masculino") || gender.equals("feminino") || gender.equals("indiferente"))
+                break;
+        } while(true);
+        ad.setGender(gender);
 
         String typology = "";
         int n = 0;
         do {
-            System.out.print("Insira a tipologia do alojamento (quarto ou T1, T2...");
+            System.out.print("Insira a tipologia do alojamento (quarto ou T1, T2...): ");
             typology = br.readLine();
+            typology = typology.trim();
             typology = typology.toLowerCase();
             if(typology.equals("quarto"))
                 break;
@@ -125,15 +154,16 @@ public class Client {
                 String aux = typology.substring(1, typology.length());
                 try {
                     n = Integer.parseInt(aux);
-                    if(n < 0) {
-                        System.out.println("Formato errado! TN (sendo N um número inteiro positivo");
-                        continue;
+                    if(n > 0) {
+                        break;
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("Formato errado! TN (sendo N um número inteiro positivo");
                     continue;
                 }
             }
+            else
+                continue;
         } while(true);
         if(typology.startsWith("t"))
             typology = "T" + String.valueOf(n);
@@ -142,33 +172,42 @@ public class Client {
         ad.setDate(new Date(System.currentTimeMillis()));
         ad.setState("inativo");
 
-        bd.insertIntoTableAdvertisement(ad);
+        int aid = obj.sendAd(ad);
+        ad.setAid(aid);
+
+        System.out.println("Ok anúncio " + aid);
     }
 
-    public static void searchAds() throws java.rmi.RemoteException, IOException {
+    /*
+    função que trata de recolher os campos desejados
+    pelo cliente para pesquisa na base de dados e mostrar
+    os anúncios que correspondem aos mesmos
+    */
+    private static void searchAds() throws java.rmi.RemoteException, IOException {
         String typeAd = "";
         String fields = "";
         do {
-            System.out.println("Tipo de anúncio:");
-            System.out.println("o - oferta");
-            System.out.println("p - procura");
+            System.out.print("Tipo de anúncio (o - oferta, p - procura): ");
             typeAd = br.readLine();
+            typeAd = typeAd.trim();
             typeAd = typeAd.toLowerCase();
-        } while(!typeAd.equals("o") || !typeAd.equals("p") || !typeAd.equals("oferta") || !typeAd.equals("procura"));
+            if(typeAd.equals("o") || typeAd.equals("p") || typeAd.equals("oferta") || typeAd.equals("procura"))
+                break;
+        } while(true);
         if(typeAd.equals("o") || typeAd.equals("oferta"))
             fields = "typead=oferta&";
         else
             fields = "typead=procura&";
-        fields += "statead=ativo&";
+        fields += "statead=ativo";
 
         String chooseFilters = "";
         do {
-            System.out.println("Deseja utilizar campos de procura adicionais?");
-            System.out.println("s - sim");
-            System.out.println("n - não");
+            System.out.print("Deseja utilizar campos de procura adicionais (s - sim, n - não)? ");
             chooseFilters = br.readLine();
             chooseFilters = chooseFilters.toLowerCase();
-        } while(!chooseFilters.equals("s") || !chooseFilters.equals("n") || !chooseFilters.equals("sim") || !chooseFilters.equals("não"));
+            if(chooseFilters.equals("s") || chooseFilters.equals("n") || chooseFilters.equals("sim") || chooseFilters.equals("não"))
+                break;
+        } while(true);
 
         if(chooseFilters.equals("sim") || chooseFilters.equals("s")) {
             String aux = "";
@@ -176,24 +215,30 @@ public class Client {
             System.out.println("Insira a localização desejada");
             aux = br.readLine();
             if(!aux.equals(""))
-                fields += "localad=" + aux + "&";
+                fields += "&localad=" + aux + "&";
             aux = "";
             do {
                 System.out.println("Insira o género desejado");
                 aux = br.readLine();
-            } while(!aux.equals("masculino") || !aux.equals("feminino") || !aux.equals("indiferente") || !aux.equals(""));
+                aux = aux.trim();
+                aux = aux.toLowerCase();
+                if(aux.equals("masculino") || aux.equals("feminino") || aux.equals("indiferente") || aux.equals(""))
+                    break;
+            } while(true);
+
             if(!aux.equals(""))
                 fields += "gender=" + aux + "&";
+
             aux = "";
             do {
-                System.out.println("Insira o preço desejado");
+                System.out.print("Insira o preço desejado: ");
                 aux = br.readLine();
                 if(aux.equals(""))
                     break;
                 try {
                     int price = Integer.parseInt(aux);
-                    if(price < 0)
-                        continue;
+                    if(price > 0)
+                        break;
                 } catch(NumberFormatException e) {
                     System.out.println("Insira um valor válido para o preço!");
                     continue;
@@ -201,89 +246,153 @@ public class Client {
             } while(true);
             if(!aux.equals(""))
                 fields += "price=" + aux;
-            bd.consultTableAdvertisement(fields);
+
         }
+        List<Ad> results = obj.sendSearchFields(fields);
+
+        if(results.size() > 0) {
+            for (Ad ad : results)
+                System.out.println("tipo: " + ad.getType() + " | estado: " + ad.getState() + " | aid: " + ad.getAid() + " | anunciante: " + ad.getAdvertiser() + " | localização: " + ad.getLocal() + " | preço: " + ad.getPrice() + " | género: " + ad.getGender() + " | data:" + ad.getDate() + " | tipologia: " + ad.getTypology());
+        }
+        else
+            System.out.println("Nenhum anúncio encontrado!");
     }
 
-    public static void searchByAdvertiser() throws java.rmi.RemoteException, IOException{
+    /*
+    função que recolhe o nome do anunciante para pesquisa
+    na base de dados e mostra os anúncios relativos a este
+     */
+    private static void searchByAdvertiser() throws java.rmi.RemoteException, IOException {
         String advertiser = "";
         do {
-            System.out.println("Insira o nome do anunciante desejado:");
+            System.out.print("Insira o nome do anunciante desejado: ");
             advertiser = br.readLine();
-        } while(advertiser.equals(""));
-        advertiser = "anunciante=" + advertiser;
-        bd.consultTableAdvertisement(advertiser);
+        } while (advertiser.equals(""));
+        advertiser = "advertiser=" + advertiser;
+
+        List<Ad> results = obj.sendSearchFields(advertiser);
+
+        if (results.size() > 0) {
+            for (Ad ad : results)
+                System.out.println("tipo: " + ad.getType() + " | estado: " + ad.getState() + " | aid: " + ad.getAid() + " | anunciante: " + ad.getAdvertiser() + " | localização: " + ad.getLocal() + " | preço: " + ad.getPrice() + " | género: " + ad.getGender() + " | data:" + ad.getDate() + " | tipologia: " + ad.getTypology());
+        }
+        else
+            System.out.println("Nenhum anúncio encontrado!");
     }
 
-    public static void getDetailsByAid() throws java.rmi.RemoteException, IOException{
+    /*
+    função responsável por recolher o aid para pesquisa na base
+    de dados e mostrar os anúncios relativos ao mesmo
+     */
+    private static void getDetailsByAid() throws IOException {
         int aux;
         do {
-            System.out.println("Insira o aid do anúncio desejado:");
+            System.out.print("Insira o aid do anúncio desejado: ");
             try {
                 aux = Integer.parseInt(br.readLine());
-                if(aux > 0)
+                if (aux > 0)
                     break;
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Aid inválido!");
                 continue;
             }
-        } while(true);
+        } while (true);
         String aid = "aid=" + String.valueOf(aux);
-        bd.consultTableAdvertisement(aid);
+
+        List<Ad> results = obj.sendSearchFields(aid);
+
+        if (results.size() > 0) {
+            for (Ad ad : results)
+                System.out.println("tipo: " + ad.getType() + " | estado: " + ad.getState() + " | aid: " + ad.getAid() + " | anunciante: " + ad.getAdvertiser() + " | localização: " + ad.getLocal() + " | preço: " + ad.getPrice() + " | género: " + ad.getGender() + " | data:" + ad.getDate() + " | tipologia: " + ad.getTypology());
+        }
+        else
+            System.out.println("Nenhum anúncio encontrado!");
     }
 
-    public static void sendMessage() throws java.rmi.RemoteException, IOException{
-        Message msg = new MessageImpl();
+    /*
+    função responsável por recolher os campos necessários para
+    uma mensagem e envia a mensagem para o objeto remoto
+     */
+    private static void sendMessage() throws IOException {
+        Message msg = new Message();
         String aux = "";
 
         do {
-            System.out.println("Digite o aid do anúncio que pretende contactar:");
+            System.out.print("Digite o aid do anúncio que pretende contactar: ");
             aux = br.readLine();
             try {
                 int n = Integer.parseInt(aux);
                 if(n > 0)
                     break;
             } catch(NumberFormatException e) {
-                System.out.println("Formato de aid inválido! Por favor insira apenas números inteiros positivos!");
+                System.err.println("Formato de aid inválido! Por favor insira apenas números inteiros positivos!");
                 continue;
             }
         } while(true);
-        msg.setAid(Integer.parseInt(aux));
 
-        aux = "";
-        do {
-            System.out.println("Insira o seu nome:");
-            aux = br.readLine();
-        } while(aux.equals(""));
-        msg.setSender(aux);
+        List<Ad> results = obj.sendSearchFields("aid=" + aux);
 
-        aux = "";
-        do {
-            System.out.println("Escreva o conteúdo da sua mensagem:");
-            aux = br.readLine();
-        } while(aux.equals(""));
-        msg.setContent(aux);
+        if(results.size() > 0) {
+            for(Ad ad : results)
+                System.out.println("tipo: " + ad.getType() + " | estado: " + ad.getState() + " | aid: " + ad.getAid() + " | anunciante: " + ad.getAdvertiser() + " | localização: " + ad.getLocal() + " | preço: " + ad.getPrice() + " | género: " + ad.getGender() + " | data:" + ad.getDate() + " | tipologia: " + ad.getTypology());
+            msg.setAid(Integer.parseInt(aux));
 
-        msg.setDate(new Date(System.currentTimeMillis()));
+            aux = "";
+            do {
+                System.out.print("Insira o seu nome: ");
+                aux = br.readLine();
+            } while (aux.equals(""));
+            msg.setSender(aux);
 
-        bd.insertIntoTableMessages(msg);
+            aux = "";
+            do {
+                System.out.print("Escreva o conteúdo da sua mensagem: ");
+                aux = br.readLine();
+            } while (aux.equals(""));
+            msg.setContent(aux);
+
+            msg.setDate(new Date(System.currentTimeMillis()));
+
+            obj.sendMessage(msg);
+        }
+        else
+            System.out.println("O anúncio não existe!");
     }
 
+    /*
+    função responsável por recolher o aid do anúncio cujo
+    se pretende ver as mensagens relativas aos mesmos
+     */
     public static void showMessages() throws IOException {
         int aid;
         do {
             try {
+                System.out.print("Insira o aid do anúncio: ");
                 aid = Integer.parseInt(br.readLine());
-                if(aid > 0)
+                if (aid > 0)
                     break;
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.err.println("Formato de aid inválido! Por favor insira um número inteiro positivo");
+                continue;
             }
-        } while(true);
+        } while (true);
         String fields = "aid=" + String.valueOf(aid);
-        bd.consultTableMessages(fields);
+
+        List<Message> results = obj.showMessages(fields);
+
+        if (results.size() > 0) {
+            for (Message msg : results)
+                System.out.println("remetente: " + msg.getSender() + " | data: " + msg.getDate() + " | aid do anúncio: " + msg.getAid() + " | conteúdo: " + msg.getContent());
+
+        }
+        else
+            System.out.println("Nenhuma mensagem encontrada no anúncio " + aid + "!");
     }
 
+    /*
+    inicializa o cliente e liga-o ao servidor
+    utilizando Java RMI para o efeito
+     */
     public static void main(String[] args) {
         String regHost = "localhost";
         String regPort = "9000";
@@ -296,13 +405,11 @@ public class Client {
         regHost = args[0];
         regPort = args[1];
         try {
-            Ad ad = (Ad) java.rmi.Naming.lookup("rmi://" + regHost + ":" + regPort + "/ad");
-            bd = new ConnectionDBImpl();
+             obj = (RemoteObject) java.rmi.Naming.lookup("rmi://" + regHost + ":" + regPort + "/remoteobject");
+
 
             System.out.println("Bem vindo ao sistema de oferta e procura de alojamentos!");
             System.out.println("");
-
-            bd.connectDb();
 
             showMenu();
         }

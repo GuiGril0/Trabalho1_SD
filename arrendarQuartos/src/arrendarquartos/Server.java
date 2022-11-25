@@ -8,7 +8,9 @@ package arrendarquartos;
  *
  * @author gui
  */
-public class Server {
+public class  Server {
+    static ConnectionDB bd;
+
     public static void main(String[] args) {
 
         int regPort = 1099;
@@ -21,13 +23,15 @@ public class Server {
         try {
             regPort = Integer.parseInt(args[0]);
 
-            Ad obj = new AdImpl();
+            RemoteObject obj = new RemoteObjectImpl();
+            bd = new ConnectionDB();
 
             java.rmi.registry.Registry registry = java.rmi.registry.LocateRegistry.getRegistry(regPort);
 
-            registry.rebind("AD", obj);
+            registry.rebind("remoteobject", obj);
 
             System.out.println("servidor pronto");
+            bd.connectDb();
 
         } catch (Exception e) {
             e.printStackTrace();

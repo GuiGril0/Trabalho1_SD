@@ -1,38 +1,103 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package arrendarquartos;
 
-import java.sql.Date;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.sql.*;
+
 /**
  *
  * @author gui
  */
-public interface Ad extends java.rmi.Remote {
-    // métodos para o cliente geral
-    public void setAdvertiser(String advertiser) throws java.rmi.RemoteException;
-    public void setType(String type) throws java.rmi.RemoteException;
-    public void setPrice(double price) throws java.rmi.RemoteException;
-    public void setGender(String gender) throws java.rmi.RemoteException;
-    public void setLocal(String local) throws java.rmi.RemoteException;
-    public void setDescription(String description) throws java.rmi.RemoteException;
-    public void setTypology(String typology) throws java.rmi.RemoteException;
-    public void setDate(Date date) throws java.rmi.RemoteException;
-    public String getAdvertiser() throws  java.rmi.RemoteException;
-    public String getType() throws  java.rmi.RemoteException;
-    public String getState() throws  java.rmi.RemoteException;
-    public double getPrice() throws  java.rmi.RemoteException;
-    public String getGender() throws  java.rmi.RemoteException;
-    public String getLocal() throws  java.rmi.RemoteException;
-    public String getDescription() throws  java.rmi.RemoteException;
-    public String getTypology() throws java.rmi.RemoteException;
-    public Date getDate() throws  java.rmi.RemoteException;
+public class  Ad implements java.io.Serializable {
+    public String advertiser;
+    public String typeAd;
+    public String stateAd;
+    public int price;
+    public String gender;
+    public String localAd;
+    public String typology;
+    public Date date;
 
-    //métodos para o cliente de gestão
-    public void setAid(int aid) throws java.rmi.RemoteException;
-    public void setState(String state) throws java.rmi.RemoteException;
+    int aid;
 
-    //métodos para a base de dados
-    public void sendAdToDB(Ad ad) throws java.rmi.RemoteException;
+    public Ad() {
+        super();
+    }
+
+    public void setAdvertiser(String advertiser) {
+        this.advertiser = advertiser;
+    }
+
+    public void setType(String type) {
+        this.typeAd = type;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setLocal(String local) {
+        this.localAd = local;
+    }
+
+
+    public void setTypology(String typology) {
+        this.typology = typology;
+    }
+
+    public void setState(String state) {
+        this.stateAd = state;
+    }
+
+    public void setAid(int aid) {
+        this.aid = aid;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    // get's
+
+    public String getAdvertiser() {
+        return advertiser;
+    }
+
+    public String getType() {
+        return typeAd;
+    }
+
+    public String getState() {
+        return stateAd;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getLocal() {
+        return localAd;
+    }
+
+    public String getTypology() {
+        return typology;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public int getAid() {return aid;}
 }
